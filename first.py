@@ -9,6 +9,6 @@ df = pd.read_csv(file, header=0)
 df_subset = df[['best_oa_location_landing_page_url', 'grants_funder_display_name', 'grants_award_id']]
 
 file_path = 'data/file.csv'
-df.to_csv(file_path, index=False)
+df_subset.to_csv(file_path, index=False)
 
 print(df_subset.head())
