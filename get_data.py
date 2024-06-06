@@ -4,17 +4,23 @@ import json
 
 #this url is for Brandeis 2024
 #api for get only 2024 grants: https://api.openalex.org/works?filter=institutions.id:https://openalex.org/I6902469,publication_year:2024&sort=publication_date:desc
-api_url = 'https://api.openalex.org/works?filter=institutions.id:https://openalex.org/I6902469'  #API URL
+base_url = 'https://api.openalex.org/works?filter=institutions.id:https://openalex.org/I6902469,publication_year:{year}&sort=publication_date:desc'
 
-response = requests.get(api_url)
+all_results = []
 
-if response.status_code == 200:
-    data = response.json()
+for year in range(2014, 2025):
+    api_url = base_url.format(year=year)
+    response = requests.get(api_url)
     
-    file_name = input("Please enter the file name (with .json extension): ")
+    if response.status_code == 200:
+        data = response.json()
+        all_results.extend(data.get('results', []))
+        print(f"Successfully fetched data for {year}")
+    else:
+        print(f"Failed to fetch data for {year}. Status code: {response.status_code}")
 
-    with open(file_name, 'w') as json_file:
-        json.dump(data, json_file, indent=4) 
-    
-else:
-    print(f"Failed to fetch data from API. Status code: {response.status_code}")
+file_name = input("Please enter the output file name (with .json extension): ")
+
+with open(file_name, 'w') as json_file:
+    json.dump(all_results, json_file, indent=4)
+
